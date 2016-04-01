@@ -2,28 +2,29 @@ PREFIX  deich: <__ONTOLOGY__>
 PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 CONSTRUCT {
-    ?work a deich:Work ;
-            deich:mainTitle ?mainTitle ;
-            deich:partTitle ?partTitle ;
-            deich:publicationYear ?publicationYear ;
-            deich:publication ?pub ;
-            deich:creator ?person .
-     ?pub a deich:Publication ;
-            deich:mainTitle ?pubMainTitle ;
-            deich:partTitle ?pubPartTitle ;
-            deich:language ?language ;
-            deich:format ?format ;
-            deich:issued ?pubPublicationYear ;
-            deich:audience ?audience .
-  ?person a deich:Person ;
-            deich:name ?name ;
-            deich:birthYear ?birthYear ;
-            deich:deathYear ?deathYear .
+     ?work a deich:Work ;
+             deich:mainTitle ?mainTitle ;
+             deich:partTitle ?partTitle ;
+             deich:publicationYear ?publicationYear ;
+             deich:publication ?pub ;
+             deich:contributor ?contrib .
+      ?pub a deich:Publication ;
+             deich:mainTitle ?pubMainTitle ;
+             deich:partTitle ?pubPartTitle ;
+             deich:language ?language ;
+             deich:format ?format ;
+             deich:issued ?pubPublicationYear ;
+             deich:audience ?audience .
+  ?contrib a deich:Contribution ;
+             ?role ?agent .
+      ?agent deich:name ?name ;
+             deich:birthYear ?birthYear ;
+             deich:deathYear ?deathYear .
 }
 WHERE {
   SELECT ?work ?mainTitle ?partTitle ?publicationYear ?audience                 # <- work
          ?pub ?pubMainTitle ?pubPartTitle ?format ?pubPublicationYear ?language # <- publication
-         ?person ?name ?deathYear ?birthYear                                    # <- person
+         ?contrib ?agent ?role ?name ?deathYear ?birthYear                      # <- agent
     WHERE {
       BIND(uri("__WORKURI__") AS ?work)
       ?work a deich:Work .
@@ -34,12 +35,14 @@ WHERE {
       OPTIONAL { ?work deich:audience ?audienceO . BIND(str(?audienceO) AS ?audience) }
 
       OPTIONAL {
-        ?work deich:creator ?person .
-        ?person a deich:Person ;
-               deich:name ?name .
+        ?work deich:contributor ?contrib .
+        ?contrib a deich:Contribution ;
+                 deich:agent ?agent ;
+                 deich:role ?role .
+        ?agent deich:name ?name .
       }
-      OPTIONAL { ?person deich:birthYear ?birthYearO . BIND(str(?birthYearO) AS ?birthYear) }
-      OPTIONAL { ?person deich:deathYear ?deathYearO . BIND(str(?deathYearO) AS ?deathYear) }
+      OPTIONAL { ?agent deich:birthYear ?birthYearO . BIND(str(?birthYearO) AS ?birthYear) }
+      OPTIONAL { ?agent deich:deathYear ?deathYearO . BIND(str(?deathYearO) AS ?deathYear) }
 
       OPTIONAL {
         ?pub a deich:Publication ;
