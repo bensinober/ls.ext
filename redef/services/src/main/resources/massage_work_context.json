@@ -2,12 +2,12 @@
   "creator": {
     "type": "Person"
   },
-  "publication": {
-    "type": "Publication"
+  "contributor": {
+    "type": "deichman:Contribution"
   },
   "type": "Work",
   "@context": {
-    "creator": "deichman:creator",
+    "contributor": "deichman:contributor",
     "format": "deichman:format",
     "Publication": "deichman:Publication",
     "partTitle": "deichman:partTitle",
@@ -25,6 +25,8 @@
     "Work": "deichman:Work",
     "publicationYear": "deichman:publicationYear",
     "issued": "deichman:issued",
-    "Person": "deichman:Person"
+    "Person": "deichman:Person",
+    "role": "http://data.deichman.no/role#",
+    "author": "role:author"
   }
 }

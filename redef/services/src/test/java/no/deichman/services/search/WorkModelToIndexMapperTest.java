@@ -16,31 +16,32 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 public class WorkModelToIndexMapperTest {
     private String comparisonJsonDocument = "{\n" +
             "  \"work\": {\n" +
-            "    \"uri\": \"%1$s\",\n" +
+            "    \"uri\": \"http:\\/\\/192.168.50.12:8005\\/work\\/w4e5db3a95caa282e5968f68866774e20\",\n" +
             "    \"contributor\": {\n" +
+            "      \"uri\": \"_:b0\",\n" +
             "      \"author\": {\n" +
-            "          \"uri\": \"%2$s\",\n" +
-            "          \"name\": \"Ragde, Anne B.\",\n" +
-            "          \"birthYear\": \"1957\"\n" +
+            "        \"uri\": \"http:\\/\\/192.168.50.12:8005\\/person\\/h10834700\",\n" +
+            "        \"birthYear\": \"1957\",\n" +
+            "        \"name\": \"Ragde, Anne B.\"\n" +
             "      }\n" +
             "    },\n" +
             "    \"mainTitle\": \"Berlinerpoplene\",\n" +
             "    \"publication\": [\n" +
             "      {\n" +
-            "        \"uri\": \"%3$s\",\n" +
-            "        \"mainTitle\": \"La casa delle bugie\",\n" +
-            "        \"issued\": \"2013\",\n" +
-            "        \"format\": \"http:\\/\\/data.deichman.no\\/format#Book\",\n" +
+            "        \"uri\": \"http:\\/\\/192.168.50.12:8005\\/publication\\/p594502562255\",\n" +
             "        \"audience\": \"http:\\/\\/data.deichman.no\\/audience#adult\",\n" +
-            "        \"language\": \"http:\\/\\/lexvo.org\\/id\\/iso639-3\\/ita\"\n" +
+            "        \"format\": \"http:\\/\\/data.deichman.no\\/format#Book\",\n" +
+            "        \"issued\": \"2013\",\n" +
+            "        \"language\": \"http:\\/\\/lexvo.org\\/id\\/iso639-3\\/ita\",\n" +
+            "        \"mainTitle\": \"La casa delle bugie\"\n" +
             "      },\n" +
             "      {\n" +
-            "        \"uri\": \"%4$s\",\n" +
-            "        \"mainTitle\": \"Berlinerpoplene\",\n" +
-            "        \"issued\": \"2004\",\n" +
-            "        \"format\": \"http:\\/\\/data.deichman.no\\/format#Book\",\n" +
+            "        \"uri\": \"http:\\/\\/192.168.50.12:8005\\/publication\\/p735933031021\",\n" +
             "        \"audience\": \"http:\\/\\/data.deichman.no\\/audience#adult\",\n" +
-            "        \"language\": \"http:\\/\\/lexvo.org\\/id\\/iso639-3\\/nob\"\n" +
+            "        \"format\": \"http:\\/\\/data.deichman.no\\/format#Book\",\n" +
+            "        \"issued\": \"2004\",\n" +
+            "        \"language\": \"http:\\/\\/lexvo.org\\/id\\/iso639-3\\/nob\",\n" +
+            "        \"mainTitle\": \"Berlinerpoplene\"\n" +
             "      }\n" +
             "    ]\n" +
             "  }\n" +
