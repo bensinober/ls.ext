@@ -75,6 +75,7 @@ public class ModelToIndexMapper {
     private String applyContext(Model model) throws IOException, JsonLdError {
         Object json = JsonUtils.fromString(RDFModelUtil.stringFrom(model, Lang.JSONLD));
         JsonLdOptions options = new JsonLdOptions();
+        options.setEmbed(true);
         Map<String, Object> framed = JsonLdProcessor.frame(json, context, options);
         Map<String, Object> graph = (Map<String, Object>) ((ArrayList<Object>) framed.get("@graph")).get(0);
         removeTypeAndBnodeId(graph);

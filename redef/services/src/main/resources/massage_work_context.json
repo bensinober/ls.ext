@@ -1,14 +1,22 @@
 {
   "type": "Work",
   "publication": {
-    "type": "Publication"
+    "type": "Publication",
+    "contributor": {
+    "type": "Contribution",
+    "agent": {
+      "type": "Agent",
+      "@embed": "@always"
+    }
+  }
   },
   "contributor": {
-      "type": "Contribution",
-      "agent": {
-        "type": "Agent"
-      }
-    },
+    "type": "Contribution",
+    "agent": {
+      "type": "Agent",
+      "@embed": "@always"
+    }
+  },
   "@context": {
     "contributor": "deichman:contributor",
     "format": "deichman:format",
