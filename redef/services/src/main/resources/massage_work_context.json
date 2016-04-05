@@ -1,14 +1,14 @@
 {
   "type": "Work",
   "publication": {
-    "type": "Publication",
-    "contributor": {
+    "type": "Publication"
+  },
+  "contributor": {
       "type": "Contribution",
       "agent": {
-        "type": "Person"
+        "type": "Agent"
       }
-    }
-  },
+    },
   "@context": {
     "contributor": "deichman:contributor",
     "format": "deichman:format",
@@ -29,9 +29,11 @@
     "publicationYear": "deichman:publicationYear",
     "issued": "deichman:issued",
     "Person": "deichman:Person",
-    "role": "http://data.deichman.no/role#",
-    "author": "role:author",
+    "role": "deichman:role",
+    "author": "http://data.deichman.no/role#author",
+    "translator": "http://data.deichman.no/role#translator",
     "agent": "deichman:agent",
-    "Contribution": "deichman:contribution"
+    "Contribution": "deichman:Contribution",
+    "Agent": "deichman:Agent"
   }
 }
