@@ -23,8 +23,12 @@ CONSTRUCT {
  ?pubContrib a deich:Contribution ;
                deich:role ?pubRole ;
                deich:agent ?pubAgent .
-     ?pubAgent deich:name ?pubAgentName .
-        ?agent deich:name ?name ;
+   ?pubAgent a deich:Agent ;
+               deich:name ?pubAgentName ;
+               deich:birthYear ?pubAgentBirthYear ;
+               deich:deathYear ?pubAgentDeathYear .
+      ?agent a deich:Agent ;
+               deich:name ?name ;
                deich:birthYear ?birthYear ;
                deich:deathYear ?deathYear .
 }
@@ -59,6 +63,8 @@ WHERE {
                ?pubAgent deich:name ?pubAgentName .
     }
   }
+  OPTIONAL { ?pubAgent deich:birthYear ?pBirthYearO . BIND(str(?pBirthYearO) AS ?pubAgentBirthYear) }
+  OPTIONAL { ?pubAgent deich:deathYear ?pDeathYearO . BIND(str(?pDeathYearO) AS ?pubAgentDeathYear) }
 
   OPTIONAL { ?pub deich:language ?languageO . BIND(str(?languageO) AS ?language) }
   OPTIONAL { ?pub deich:format ?formatO . BIND(str(?formatO) AS ?format) }
