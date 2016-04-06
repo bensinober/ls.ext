@@ -75,22 +75,26 @@ public class ModelToIndexMapper {
     private String applyContext(Model model) throws IOException, JsonLdError {
         Object json = JsonUtils.fromString(RDFModelUtil.stringFrom(model, Lang.JSONLD));
         JsonLdOptions options = new JsonLdOptions();
+        options.setEmbed(true);
         Map<String, Object> framed = JsonLdProcessor.frame(json, context, options);
         Map<String, Object> graph = (Map<String, Object>) ((ArrayList<Object>) framed.get("@graph")).get(0);
-        removeType(graph);
+        removeTypeAndBnodeId(graph);
         Map<String, Object> root = new HashMap<>();
         root.put(type, graph);
         return new Gson().toJson(root);
     }
 
-    private void removeType(Object input) {
+    private void removeTypeAndBnodeId(Object input) {
         if (input instanceof Map) {
             Map map = (Map) input;
             map.remove("type");
-            map.forEach((key, value) -> removeType(value));
+            if ( map.get("uri").toString().startsWith("_:") ) {
+                map.remove("uri");
+            }
+            map.forEach((key, value) -> removeTypeAndBnodeId(value));
         } else if (input instanceof List) {
             List list = (List) input;
-            list.forEach(this::removeType);
+            list.forEach(this::removeTypeAndBnodeId);
         }
     }
 }
