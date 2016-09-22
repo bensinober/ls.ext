@@ -28,14 +28,16 @@ class ChangePinForm extends React.Component {
     const { changePasswordError } = this.props
     if (changePasswordError) {
       return messages[ changePasswordError.message ]
-        ? <div style={{ color: 'red' }}><FormattedMessage {...messages[ changePasswordError.message ]} /></div>
-        : <div style={{ color: 'red' }}><FormattedMessage {...messages.genericChangePasswordError} /></div>
+        ? <div style={{ color: 'red', fontSize: '12px' }}>
+        <FormattedMessage {...messages[ changePasswordError.message ]} /></div>
+        : <div style={{ color: 'red', fontSize: '12px' }}><FormattedMessage {...messages.genericChangePasswordError} />
+      </div>
     }
   }
 
   getValidator (field) {
     if (field && field.meta.touched && field.meta.error) {
-      return <div style={{ color: 'red' }}>{this.props.intl.formatMessage(field.meta.error)}</div>
+      return <div style={{ color: 'red', fontSize: '12px' }}>{this.props.intl.formatMessage(field.meta.error)}</div>
     }
   }
 
@@ -59,16 +61,16 @@ class ChangePinForm extends React.Component {
             </div>
 
             <div className="change-pin-fields">
-              <FormInputField name="currentPin" type="password" message={messages.currentPin} headerType="h2"
-                              getValidator={this.getValidator} isLabelOverInput={false} hasLabel="hasLabel"
-                              formName={formName} />
+              <FormInputField name="currentPin" message={messages.currentPin} headerType="h2" type="password"
+                              formName={formName} getValidator={this.getValidator} excludeLabel />
+
               {this.renderError()}
-              <FormInputField name="newPin" type="password" message={messages.newPin} headerType="h2"
-                              getValidator={this.getValidator} isLabelOverInput={false} hasLabel="hasLabel"
-                              formName={formName} />
-              <FormInputField name="repeatPin" type="password" message={messages.repeatPin} headerType="h2"
-                              getValidator={this.getValidator} isLabelOverInput={false} hasLabel="hasLabel"
-                              formName={formName} />
+
+              <FormInputField name="newPin" message={messages.newPin} headerType="h2" type="password"
+                              formName={formName} getValidator={this.getValidator} excludeLabel />
+
+              <FormInputField name="repeatPin" message={messages.repeatPin} headerType="h2" type="password"
+                              formName={formName} getValidator={this.getValidator} excludeLabel />
             </div>
           </section>
           <footer>

@@ -11,7 +11,6 @@ WITH <http://deichman.no/migration>
 MODIFY
 
 DELETE {
-  ?pub :literaryForm literaryForm:comicBook .
   ?pub :format format:Book .
 }
 
@@ -63,7 +62,6 @@ WHERE {
       (format:Diapositive             mediaType:Other)
       (format:Microfiche              mediaType:Other)
       (format:MicrofilmReel           mediaType:Other)
-      (format:Poster                  mediaType:Other)
       (format:Map                     mediaType:Other)
     }
 }

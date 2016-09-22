@@ -1,4 +1,67 @@
+@mixin modal-content {
+  position: relative;
+  padding: rhythm(4);
+  background: $greyColor;
+  border-radius: 0.5em;
+  border: 1px solid $mediumGreyColor;
+
+  .error-msg {
+    @include span(12);
+    margin-bottom: rhythm(4);
+
+    p {
+      width: 100%;
+      margin: 0;
+    }
+
+  }
+
+  .close-modal-button {
+    position: absolute;
+    background: $white;
+    border: 1px solid $blackColor;
+    border-radius: 1em;
+    width: 2em;
+    height: 2em;
+    top: -1em;
+    right: -1em;
+    font-size: 1em;
+    padding: 0;
+    margin: 0;
+
+    &:hover {
+      background: $darkGreyColor;
+      color: $white;
+    }
+
+  }
+
+  h1 {
+    @include span(12);
+    text-align: center;
+    @include semiBoldFont;
+    margin: 0;
+    font-size: rhythm(4);
+    font-size: normal;
+  }
+
+  .form-item, p {
+    margin-top: rhythm(1);
+    margin-bottom: rhythm(1);
+  }
+
+  a:hover {
+    cursor: pointer;
+  }
+
+  .cancel-link {
+    margin-left: rhythm(5);
+  }
+
+}
+
 @mixin wrapper-container() {
+  @include container();
   padding: gutter(12);
   @include breakpoint($small) {
     @include container(800px);
@@ -57,11 +120,17 @@
 }
 
 @mixin border-bottom {
-   border-bottom: 3px solid #212121;
+   border-bottom: 2px solid #212121;
+   @include breakpoint($small) {
+    border-bottom: 3px solid #212121;
+   }
 }
 
 @mixin border-top {
-  border-top: 3px solid #212121;
+  border-top: 2px solid #212121;
+  @include breakpoint($small) {
+    border-top: 3px solid #212121;
+  }
 }
 
 @mixin border {
@@ -69,15 +138,18 @@
 }
 
 @mixin boldFont {
-  font-family: 'poppins-bold', Arial, sans-serif;
+  font-family: 'open-sans', Arial, sans-serif;
+  font-weight: 400;
 }
 
 @mixin semiBoldFont {
-  font-family: 'poppins-semibold', Arial, sans-serif;
+  font-family: 'open-sans', Arial, sans-serif;
+  font-weight: 600;
 }
 
 @mixin regularFont {
-  font-family: 'poppins-regular', Arial, sans-serif;
+  font-family: 'open-sans', Arial, sans-serif;
+  font-weight: 700;
 }
 
 @mixin regularFontSize {

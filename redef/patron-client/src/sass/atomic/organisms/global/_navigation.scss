@@ -15,8 +15,8 @@
 // MOBILE NAV
 .btn-mobile-toggle {
   float: right;
-  height: 30px;
-  width: 30px;
+  height: rhythm(4);
+  width: rhythm(4);
   cursor: pointer;
 }
 .primary-mobile-menu {
@@ -27,7 +27,6 @@
     max-height: 0;
   }
   ul {
-    border-top: 2px solid $blackColor;
     width: 100%;
     list-style: none;
     padding: 0;

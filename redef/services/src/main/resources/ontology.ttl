@@ -96,7 +96,7 @@
 
 :CompositionType a rdfs:Class ;
   rdfs:label "Musical composition type"@en ;
-  rdfs:label "Koompissjonstype"@no .
+  rdfs:label "Komposisjonstype"@no .
 
 :Instrumentation a rdfs:Class ;
   rdfs:label "Instrumentation"@en ;
@@ -229,9 +229,9 @@ duo:Biography a rdfs:Class ;
   rdfs:range xsd:string .
 
 :ordinal a rdfs:Property ;
-  rdfs:label "Numeration"@en ;
-  rdfs:label "Ordinal"@no ;
-  rdfs:domain :Person ;
+  rdfs:label "Ordinal"@en ;
+  rdfs:label "Nummer"@no ;
+  rdfs:domain :Person, :Event ;
   rdfs:range xsd:string .
 
 # ToDo: Erstatte personTitle med :specification. Domain: Person, Corporation, Subject, Place
@@ -623,12 +623,6 @@ duo:Biography a rdfs:Class ;
   rdfs:domain :Event, :Corporation  ;
   rdfs:range :Place.
 
-:number a rdfs:Property ;
-  rdfs:label "Number"@en ;
-  rdfs:label "Nummer"@no ;
-  rdfs:domain :Event ;
-  rdfs:range xsd:string .
-
 :date a rdfs:Property ;
   rdfs:label "Date"@en ;
   rdfs:label "Dato"@no ;
@@ -659,6 +653,7 @@ duo:Biography a rdfs:Class ;
   rdfs:domain :Publication ;
   rdfs:range xsd:string .
 
-
-
-
+:hasDescription a rdfs:Property ;
+  rdfs:label "Description"@en ;
+  rdfs:label "Beskrivelse"@no ;
+  rdfs:range xsd:string .

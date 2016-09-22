@@ -35,6 +35,7 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static javax.ws.rs.core.Response.accepted;
 import static javax.ws.rs.core.Response.noContent;
@@ -158,7 +159,11 @@ public final class EntityResource extends ResourceBase {
             Iterator<RDFNode> sourceIterator = model.listObjectsOfProperty(ResourceFactory.createProperty(BaseURI.ontology("publicationOf")));
             while (sourceIterator.hasNext()) {
                 String publicationOf = sourceIterator.next().asResource().getURI();
-                getSearchService().index(new XURI(publicationOf));
+                try {
+                    getSearchService().index(new XURI(publicationOf));
+                } catch (RuntimeException e) {
+                    // Will fail if massaged model is empty, but that shouldn't cause this delete request to fail
+                }
             }
         } else {
             getEntityService().delete(model);
@@ -192,13 +197,14 @@ public final class EntityResource extends ResourceBase {
             Property publicationOfProperty = ResourceFactory.createProperty(BaseURI.ontology("publicationOf"));
             if (m.getProperty(null, publicationOfProperty) != null) {
                 String workUri = m.getProperty(null, publicationOfProperty).getObject().toString();
-                XURI workXURI = new XURI(workUri);
-
-                getSearchService().index(workXURI);
-                getSearchService().index(xuri);
+                xuri = new XURI(workUri);
             }
-        } else {
+        }
+        try {
             getSearchService().index(xuri);
+        } catch (RuntimeException e) {
+            // If the resource is new and empty, search indexing will fail, but we
+            // should not care about that here.
         }
 
         return ok().entity(getJsonldCreator().asJSONLD(m)).build();
@@ -236,6 +242,24 @@ public final class EntityResource extends ResourceBase {
     public Response sync(@PathParam("type") final String type, @PathParam("id") String id) throws Exception {
         XURI xuri = new XURI(BaseURI.root(), type, id);
         getEntityService().synchronizeKoha(xuri);
+        return accepted().build();
+    }
+
+    @PUT
+    @Path("/sync_all")
+    public Response syncAll(@PathParam("type") final String type, @PathParam("id") String id) throws Exception {
+        if (!type.equals("publication")) {
+            throw new BadRequestException("can only sync all on publication");
+        }
+        CompletableFuture.runAsync(() -> {
+            getEntityService().retrieveAllWorkUris(type, uri ->  {
+                try {
+                    getEntityService().synchronizeKoha(new XURI(uri));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
         return accepted().build();
     }
 

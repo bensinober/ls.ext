@@ -430,7 +430,7 @@
                       predicate: "ONTOLOGY.specification"
                       object:
                         datatype: "literal"
-                class: "RAW.Event"
+                class: "ONTOLOGY.Event"
     -
       '111':
         subfields:
@@ -840,7 +840,7 @@
         subfields:
           -
             a:
-              predicate: "RAW.description"
+              predicate: "ONTOLOGY.hasDescription"
               object:
                 datatype: "literal"
     -
@@ -874,7 +874,7 @@
         subfields:
           -
             a:
-              predicate: "ONTOLOGY.abstract"
+              predicate: "ONTOLOGY.hasSummary"
               object:
                 datatype: "literal"
     -
@@ -1295,7 +1295,7 @@
                       predicate: "ONTOLOGY.specification"
                       object:
                         datatype: "literal"
-                class: "RAW.Event"
+                class: "ONTOLOGY.Event"
     -
       '611':
         subfields:
@@ -1747,12 +1747,12 @@
         subfields:
           -
             '3':
-              predicate: "MIGRATION.musicGenre"
+              predicate: "ONTOLOGY.hasCompositionType"
               object:
                 datatype: "uri"
-                prefix: "http://data.deichman.no/musicGenre/x"
+                prefix: "http://data.deichman.no/compositionType/c"
               relation:
-                class: "MIGRATION.MusicGenre"
+                class: "ONTOLOGY.CompositionType"
                 subfields:
                   -
                     '3':
@@ -2020,14 +2020,28 @@
       '658':
         subfields:
           -
-            'a':
+            a:
               predicate: "MIGRATION.musicalStaff"
               object:
-                datatype: "literal"
-                combinestring: "\n"
+                combinestring: "_"
+                datatype: "uri"
+                prefix: "http://data.deichman.no/musicalStaff/m"
                 combine:
                   - "a"
                   - "b"
+                urlize: true
+              relation:
+                subfields:
+                  -
+                    "a":
+                      predicate: "MIGRATION.musicalInstrument"
+                      object:
+                        datatype: "literal"
+                  -
+                    "b":
+                      predicate: "MIGRATION.numberOfPerformers"
+                      object:
+                        datatype: "literal"
     -
       '690':
         subfields:
@@ -2680,33 +2694,6 @@
       '699':
         subfields:
           -
-            'a':
-              predicate: "MIGRATION.BsSubject"
-              object:
-                datatype: "uri"
-                combinestring: "_"
-                md5: true
-                combine:
-                  - "a"
-                  - "q"
-                prefix: "http://data.deichman.no/subject/s"
-              relation:
-                subfields:
-                  -
-                    'a':
-                      predicate: "ONTOLOGY.prefLabel"
-                      object:
-                        datatype: "literal"
-                  -
-                    'q':
-                      predicate: "ONTOLOGY.specification"
-                      object:
-                        datatype: "literal"
-                class: "ONTOLOGY.Subject"
-    -
-      '699':
-        subfields:
-          -
             a:
               predicate: "MIGRATION.subjectAuthority"
               object:
@@ -2908,11 +2895,11 @@
             't':
               conditions:
                 indicator:
-                  default: "ONTOLOGY.basedOn"
+                  default: "MIGRATION.basedOn"
                   indicator2:
                     subs:
-                      '0': "ONTOLOGY.basedOn"
-                      '2': "ONTOLOGY.hasPart"
+                      '0': "MIGRATION.basedOn"
+                      '2': "MIGRATION.hasPart"
                     orig: "0|2"
               object:
                 datatype: "uri"
@@ -3246,7 +3233,7 @@
                       predicate: "ONTOLOGY.specification"
                       object:
                         datatype: "literal"
-                class: "RAW.Event"
+                class: "ONTOLOGY.Event"
     -
       '711':
         subfields:
@@ -3596,7 +3583,7 @@
                     ef: "Blu-ray"
                     eg: "3D_movie"
                     fd: "Diapositive"
-                    fm: "Poster"
+                    fm: "Book"
                     ga: "E-book"
                     gc: "DVD-ROM"
                     gd: "CD-ROM"
@@ -3638,7 +3625,7 @@
                   subs:
                     r: "novel"
                     n: "shortStory"
-                    d: "poem"
+                    d: "poetry"
                     s: "drama"
                     t: "comicBook"
                     a: "anthology"
@@ -3750,7 +3737,7 @@
                 regex_split: "(\\w{3})"
                 lowercase: true
             b:
-              predicate: "ONTOLOGY.subTitles"
+              predicate: "ONTOLOGY.hasSubtitles"
               object:
                 datatype: "uri"
                 regex_strip: "[\\W]+"

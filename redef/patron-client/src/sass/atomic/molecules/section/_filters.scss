@@ -1,55 +1,86 @@
 .filters {
-
-  @include span(12 of 12);
-
-  @include breakpoint($small){
-    margin-top: 25px;
-    @include border-top;
-  }
-
-
-  @include breakpoint($small){
-     @include span(3 of 12);
-  }
+  @include span(12);
+  @include container();
+  margin-bottom: rhythm(4);
 
   .limit-filters {
-    display: none;
-  }
+    @include span(12);
+    @include container();
+    @include border-bottom;
+    display: block;
+    color: $redColor;
+    margin-bottom: rhythm(3);
+    border-top: 1px solid $mediumGreyColor;
 
-  @include breakpoint($lt-small){
-    .limit-filters {
-      display: block;
-      color: $redColor;
-      @include span(12 of 12);
-      margin-bottom: rhythm(2);
-      @include border-bottom;
-
-      span {
-        @include span(10 of 12);
-        text-transform: uppercase;
+    a {
+      width: 100%;
+      display: inline-block;
+      background-image: url('/images/btn-limit-filter-close.svg');
+      background-position: right rhythm(5) center;
+      background-repeat: no-repeat;
+      padding: rhythm(2) 0;
+      text-decoration: none;
+      &:hover, &:focus {
+        background-color: $greyColor;
       }
-
-      .limit-filters-open {
-        @include span(1.2 of 12);
-        float: right;
-        margin-top: rhythm(2);
+      &.filters-hidden {
+        background-image: url('/images/btn-limit-filter-open.svg');
       }
     }
+
   }
 
+  .filter-wrapper {
+    @include span(12);
+    @include container;
+
+    .filter-group {
+      @include span(12);
+      @include container;
+
+      header {
+        @include span(12);
+      }
+
+      section {
+        @include span(12);
+      }
+
+      footer {
+        @include span(12);
+      }
+
+    }
+
+  }
 
   .limit-filters-header {
     display: none;
+  }
 
-    @include breakpoint($small){
+}
+
+@include breakpoint($small) {
+
+  .filters {
+    @include span(3);
+    @include border-top;
+    margin-top: rhythm(5);
+
+    .limit-filters-header {
+      @include span(12 of 12);
       display: block;
       text-transform: uppercase;
       font-size: 0.8em;
       color: $darkGreyColor;
-      @include span(12 of 12);
       padding-bottom: rhythm(2);
       margin-top: rhythm(-5);
     }
+
+    .limit-filters {
+      display: none;
+    }
+
   }
 
 }

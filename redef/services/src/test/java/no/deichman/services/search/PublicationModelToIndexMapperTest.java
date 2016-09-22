@@ -46,7 +46,10 @@ public class PublicationModelToIndexMapperTest {
             + "       \"uri\": \"http://data.deichman.no/mediaType#Book\","
             + "       \"formats\": [\"http://data.deichman.no/format#Book\",\"http://data.deichman.no/format#E-Book\"]}],\n"
             + "    \"languages\": [\"http://lexvo.org/id/iso639-3/ita\"],\n"
+            + "    \"language\": \"ita\",\n"
             + "    \"mainTitle\": \"La casa delle bugie\",\n"
+            + "    \"partTitle\": \"abc\",\n"
+            + "    \"title\": [\"La casa delle bugie\", \"abc\", \"xyz\"],\n"
             + "    \"nationality\": \"Norge\",\n"
             + "    \"series\": [\"italiano norveigano\"],"
             + "    \"publicationYear\": \"2013\",\n"
@@ -54,6 +57,8 @@ public class PublicationModelToIndexMapperTest {
             + "    \"subject\": [\"Trondheim\"],\n"
             + "    \"genre\": [\"Krim (spesial)\"],\n"
             + "    \"dewey\": \"929.209484213\", \n"
+            + "    \"litform\": \"Roman\",\n"
+            + "    \"isbn\": \"978-88-545-0662-6\",\n"
             + "    \"workUri\": \"http://data.deichman.no/work/w4e5db3a95caa282e5968f68866774e20\"\n"
             + "}";
 
@@ -86,6 +91,8 @@ public class PublicationModelToIndexMapperTest {
                 + "    ns2:isbn \"978-88-545-0662-6\" ;\n"
                 + "    ns2:language <http://lexvo.org/id/iso639-3/ita> ;\n"
                 + "    ns2:mainTitle \"La casa delle bugie\" ;\n"
+                + "    ns2:partTitle \"abc\" ;\n"
+                + "    ns2:subtitle \"xyz\" ;\n"
                 + "    ns2:publicationOf <http://data.deichman.no/work/w4e5db3a95caa282e5968f68866774e20> ;\n"
                 + "    ns2:publicationYear \"2013\"^^xsd:gYear ;\n"
                 + "    ns2:recordID \"3\" ;\n"
@@ -120,8 +127,7 @@ public class PublicationModelToIndexMapperTest {
                 + "            ns2:agent <http://data.deichman.no/person/h10834700> ;\n"
                 + "            ns2:role ns5:author ] ;\n"
                 + "    ns2:language <http://lexvo.org/id/iso639-3/nob> ;\n"
-                + "    ns2:literaryForm <http://data.deichman.no/literaryForm#fiction>,\n"
-                + "        <http://data.deichman.no/literaryForm#novel> ;\n"
+                + "    ns2:literaryForm <http://data.deichman.no/literaryForm#novel> ;\n"
                 + "    ns2:mainTitle \"Berlinerpoplene\" ;\n"
                 + "    ns2:publicationYear \"2004\"^^xsd:gYear ;\n"
                 + "    ns2:genre <http://deichman.no/genre/g1> ;\n"
@@ -154,7 +160,8 @@ public class PublicationModelToIndexMapperTest {
                 + "<http://data.deichman.no/format#E-Book> rdfs:label \"E-bok\"@no ."
                 + "\n"
                 + "<http://data.deichman.no/serial/s1> rdf:type ns2:Serial ;\n"
-                + "     ns2:mainTitle \"italiano norveigano\" .";
+                + "     ns2:mainTitle \"italiano norveigano\" .\n"
+                + "<http://data.deichman.no/literaryForm#novel> rdfs:label \"Roman\"@no, \"Novel\"@en ";
 
         Model model = RDFModelUtil.modelFrom(inputGraph, Lang.TURTLE);
         String jsonDocument = new ModelToIndexMapper("publication").createIndexDocument(model, publicationXuri1);

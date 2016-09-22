@@ -23,6 +23,7 @@
 
     Ractive.DEBUG = false
     var ractive
+    var titleRactive
     var supportPanelLeftEdge
     var supportPanelWidth
     require('jquery-ui/dialog')
@@ -525,16 +526,16 @@
       return inputs
     }
 
-  function withPublicationOfWorkInput (handler) {
-    var publicationOfInput = _.find(allInputs(), function (input) {
-      return (input.fragment === 'publicationOf' && input.domain === 'deichman:Publication' && input.type === 'entity')
-    })
-    if (publicationOfInput) {
-      handler(publicationOfInput)
+    function withPublicationOfWorkInput (handler) {
+      var publicationOfInput = _.find(allInputs(), function (input) {
+        return (input.fragment === 'publicationOf' && input.domain === 'deichman:Publication' && input.type === 'entity')
+      })
+      if (publicationOfInput) {
+        handler(publicationOfInput)
+      }
     }
-  }
 
-  function inputFromInputId (inputId) {
+    function inputFromInputId (inputId) {
       let keypath = ractive.get(`inputLinks.${inputId}`)
       return ractive.get(keypath)
     }
@@ -833,6 +834,9 @@
       if (prop.includeOnlyWhen) {
         input.includeOnlyWhen = prop.includeOnlyWhen
       }
+      if (prop.isTitleSource) {
+        input.isTitleSource = prop.isTitleSource
+      }
     }
 
     var lastFoundOrActualLast = function (lastIndexOfVisible, numberOfInputs) {
@@ -1012,7 +1016,8 @@
               id: subInput.id,
               required: subInput.required,
               searchable: type === 'searchable-with-result-in-side-panel',
-              showOnlyWhen: subInput.showOnlyWhen
+              showOnlyWhen: subInput.showOnlyWhen,
+              isTitleSource: subInput.isTitleSource
             }),
             parentInput: currentInput
           }
@@ -1084,7 +1089,8 @@
               showOnlyWhen: input.showOnlyWhen,
               dataAutomationId: input.searchMainResource.automationId,
               inputIndex: index,
-              id: input.id
+              id: input.id,
+              isTitleSource: input.isTitleSource
             })
           } else if (input.searchForValueSuggestions) {
             groupInputs.push({
@@ -1100,7 +1106,8 @@
               searchForValueSuggestions: input.searchForValueSuggestions,
               inputIndex: index,
               id: input.id,
-              includeOnlyWhen: input.includeOnlyWhen
+              includeOnlyWhen: input.includeOnlyWhen,
+              isTitleSource: input.isTitleSource
             })
           } else {
             input.inputIndex = index
@@ -1673,6 +1680,12 @@
             }
           }
 
+          titleRactive = new Ractive({
+            el: 'title',
+            template: '{{title.1 || title.2 || title.3 || "Katalogisering"}}',
+            data: applicationData
+          })
+
           // Initialize ractive component from template
           ractive = new Ractive({
             el: 'container',
@@ -1792,10 +1805,10 @@
                 return ractive.get(`${keyPath}.values.${valueIndex}.current.value`)
               },
               checkRequiredInputValueForShow: function (showOnlyWhenInputHasValueSpec) {
-                  if (!(showOnlyWhenInputHasValueSpec && showOnlyWhenInputHasValueSpec.showOnlyWhenInputHasValue)) {
-                    return true
-                  } else {
-                    return valueOfInputByInputId(showOnlyWhenInputHasValueSpec.showOnlyWhenInputHasValue, 0)
+                if (!(showOnlyWhenInputHasValueSpec && showOnlyWhenInputHasValueSpec.showOnlyWhenInputHasValue)) {
+                  return true
+                } else {
+                  return valueOfInputByInputId(showOnlyWhenInputHasValueSpec.showOnlyWhenInputHasValue, 0)
                 }
               },
               valueOrderOfInputById: function (inputId, valueIndex) {
@@ -1819,13 +1832,12 @@
                 var shouldInclude = true
                 if (input.includeOnlyWhen) {
                   _.each(_.keys(input.includeOnlyWhen), function (property) {
-                    let includeWhenValues = _.flatten([input.includeOnlyWhen[property]])
+                    let includeWhenValues = _.flatten([ input.includeOnlyWhen[ property ] ])
                     allGroupInputs(function (input1) {
-                      if (input1.fragment === property &&
-                        !_.contains(includeWhenValues, _.flatten([
-                          propertyName(URI.parseQuery(document.location.href)[property] ||
-                            input1.values[0].current.value)
-                        ])[0])) {
+                      if (input1.fragment === property && !_.contains(includeWhenValues, _.flatten([
+                          propertyName(URI.parseQuery(document.location.href)[ property ] ||
+                            input1.values[ 0 ].current.value)
+                        ])[ 0 ])) {
                         shouldInclude = false
                         return true
                       }
@@ -2110,7 +2122,8 @@
                   loadWorksAsSubject(origin)
                 }
               },
-              selectSearchableItem: function (event, origin, displayValue) {
+              selectSearchableItem: function (event, origin, displayValue, options) {
+                options = options || {}
                 ractive.set(origin + '.searchResult', null)
                 var inputKeyPath = grandParentOf(origin)
                 var input = ractive.get(inputKeyPath)
@@ -2140,7 +2153,7 @@
                   unloadResourceForDomain(rdfType)
                   fetchExistingResource(uri)
                   ractive.set(inputKeyPath + '.widgetOptions.enableEditResource.showInputs', Number.parseInt(_.last(origin.split('.'))))
-                } else if (input.isMainEntry) {
+                } else if (input.isMainEntry || options.subItem) {
                   fetchExistingResource(uri)
                 } else {
                   ractive.set(origin + '.old.value', ractive.get(origin + '.current.value'))
@@ -2160,24 +2173,6 @@
                   ractive.set(origin + '.searchResult', null)
                   ractive.update()
                 }
-              },
-              openResourceWithTemplate (event, uri, template) {
-                fetchExistingResource(uri)
-                updateBrowserLocationWithTemplate(template)
-                Main.init()
-              },
-              selectWorkResource: function (event) {
-                var uri = event.context.uri
-                unloadResourceForDomain('Publication')
-                fetchExistingResource(uri)
-              },
-              setResourceAndWorkResource: function (event, mainItem, origin, domainType) {
-                ractive.fire('selectSearchableItem', {
-                  context: {
-                    uri: mainItem.uri
-                  }
-                }, origin, mainItem.name)
-                ractive.fire('selectWorkResource', { context: event.context })
               },
               unselectEntity: function (event) {
                 ractive.set(event.keypath + '.searchResult', null)
@@ -2710,7 +2705,7 @@
 
         function loadWorkOfPublication () {
           withPublicationOfWorkInput(function (publicationOfInput) {
-            var workUri = _.flatten([publicationOfInput.values[ 0 ].current.value])[0]
+            var workUri = _.flatten([ publicationOfInput.values[ 0 ].current.value ])[ 0 ]
             if (workUri) {
               return fetchExistingResource(workUri).then(function () {
                 ractive.set('targetUri.Work', workUri)
@@ -2856,7 +2851,23 @@
                   }
                 } ]
               }
-            ractive.update()
+              ractive.update()
+            }
+          })
+          return applicationData
+        }
+
+        let initTitle = function (applicationData) {
+          allGroupInputs(function (input) {
+            let titleSource = input.isTitleSource
+            if (titleSource) {
+              let keypath = ractive.get(`inputLinks.${input.id}`)
+              ractive.observe(`${keypath}.values.0.current.value`, function (newValue) {
+                let title = `${newValue || ''}${titleSource.qualifier || ''}`
+                if (typeof newValue === 'string' && newValue !== '') {
+                  titleRactive.set(`title.${titleSource.priority}`, title)
+                }
+              })
             }
           })
           return applicationData
@@ -2875,6 +2886,7 @@
           .then(initHeadlineParts)
           .then(initInputLinks)
           .then(initInputInterDependencies)
+          .then(initTitle)
           .then(initValuesFromQuery)
         // .catch(function (err) {
         //   console.log('Error initiating Main: ' + err)

@@ -194,17 +194,17 @@ When(/^boka reserveres av "(.*?)" på egen avdeling$/) do |name|
 end
 
 When(/^reserveringskøen kjøres$/) do
-  `docker exec koha koha-foreach --enabled /usr/share/koha/bin/cronjobs/holds/build_holds_queue.pl`
+  `docker exec xkoha koha-foreach --enabled /usr/share/koha/bin/cronjobs/holds/build_holds_queue.pl`
   STDERR.puts "build_holds_queue.pl has returned"
 end
 
 When(/^katalogen reindekseres$/) do
-  `docker exec koha koha-rebuild-zebra -v -b --wait-for-lock #{ENV['KOHA_INSTANCE']}`
+  `docker exec xkoha koha-rebuild-zebra -v -b --wait-for-lock #{ENV['KOHA_INSTANCE']}`
   STDERR.puts "koha-rebuild-zebra has returned"
 end
 
 When(/^meldingskøen kjøres$/) do
-  `docker exec koha koha-foreach --enabled /usr/share/koha/bin/cronjobs/process_message_queue.pl`
+  `docker exec xkoha koha-foreach --enabled /usr/share/koha/bin/cronjobs/process_message_queue.pl`
   STDERR.puts "process_message_queue.pl has returned"
 end
 
@@ -461,7 +461,7 @@ end
 When(/^ser jeg tittelen i bokposten$/) do
   tries = 5
   begin
-    @browser.h1(:class => 'title').when_present(BROWSER_WAIT_TIMEOUT).text.should be == @context[:publication_maintitle]
+    @browser.div(:id => 'catalogue_detail_biblio').h3.when_present(BROWSER_WAIT_TIMEOUT).text.should be == @context[:publication_maintitle]
   rescue Watir::Wait::TimeoutError
     STDERR.puts "TIMEOUT: retrying ... #{(tries -= 1)}"
     if (tries == 0)
@@ -477,7 +477,7 @@ end
 When(/^ser jeg forfatteren i bokposten$/) do
   tries = 5
   begin
-    @browser.h5(:class => 'author').when_present(BROWSER_WAIT_TIMEOUT).a.text.should be == @context[:work_creator]
+    @browser.div(:id => 'catalogue_detail_biblio').p.when_present(BROWSER_WAIT_TIMEOUT).a.text.should be == @context[:work_creator]
   rescue Watir::Wait::TimeoutError
     STDERR.puts "TIMEOUT: retrying ... #{(tries -= 1)}"
     if (tries == 0)

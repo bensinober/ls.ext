@@ -10,7 +10,7 @@ import ValidationMessage from '../../components/ValidationMessage'
 import fields from '../../../common/forms/registrationPartOne'
 import validator from '../../../common/validation/validator'
 import asyncValidate from '../../utils/asyncValidate'
-import FormInputFieldWithBottomLabelContainer from '../../components/FormInputFieldWithBottomLabelContainer'
+import FormInputField from '../../components/FormInputField'
 
 const formName = 'registrationPartOne'
 
@@ -27,53 +27,56 @@ class RegistrationFormPartOne extends React.Component {
 
   renderSSNInfo () {
     return (
-      <div data-automation-id="ssninfo">
-        <span className="display-inline">
-          <FormattedMessage {...messages.ssnInfo} />
-        </span>
-      </div>
+      <p data-automation-id="ssninfo">
+        <FormattedMessage {...messages.ssnInfo} />
+      </p>
     )
   }
 
   renderCheckingForExistingUser () {
     return (
-      <div data-automation-id="checking_existing_user">
-        <span className="display-inline">
-          <FormattedMessage {...messages.checkingForExistingUser} />
-        </span>
-      </div>
+      <p data-automation-id="checking_existing_user">
+        <FormattedMessage {...messages.checkingForExistingUser} />
+      </p>
     )
   }
 
   renderCheckForExistingUserSuccess () {
     return (
-      <div data-automation-id="check_for_existing_user_success">
-        <span className="display-inline">
-          <FormattedMessage {...messages.checkForExistingUserSuccess} />
-        </span>
-      </div>
+      <p data-automation-id="check_for_existing_user_success">
+        <FormattedMessage {...messages.checkForExistingUserSuccess} />
+      </p>
     )
   }
 
   renderCheckForExistingUserError (message) {
     return (
       <div data-automation-id="check_for_existing_user_error">
-        <span className="display-inline">
-          <p data-automation-id="check_for_existing_user_error_message">
-            {messages[ message ]
-              ? <FormattedMessage {...messages[ message ]} />
-              : <FormattedMessage {...messages.genericRegistrationError} />}
-          </p>
-        </span>
+        <p data-automation-id="check_for_existing_user_error_message">
+          {messages[ message ]
+            ? <FormattedMessage {...messages[ message ]} />
+            : <FormattedMessage {...messages.genericRegistrationError} />}
+        </p>
       </div>
+    )
+  }
+
+  renderContinueAndCancelButtons (submitting) {
+    return (
+      <p>
+        <button className="black-btn" type="submit" disabled={submitting || this.hasInvalidFormFields()}
+                data-automation-id="check_existing_user_button">
+          <FormattedMessage {...messages.checkForExistingUser} />
+        </button>
+
+        <a className="cancel-link" onClick={this.handleCancel} title="cancel"><FormattedMessage {...messages.cancel} /></a>
+      </p>
     )
   }
 
   getValidator (field) {
     if (field.meta.touched && field.meta.error) {
-      return <div style={{ color: 'red' }}><ValidationMessage message={field.meta.error} /></div>
-    } else {
-      return <div>&nbsp;</div>
+      return <div className="feedback"><ValidationMessage message={field.meta.error} /></div>
     }
   }
 
@@ -90,57 +93,32 @@ class RegistrationFormPartOne extends React.Component {
 
     return (
       <form onSubmit={this.props.handleSubmit(this.props.registrationActions.checkForExistingUser)}>
+        <h1><FormattedMessage {...messages.registerAsLoaner} /></h1>
         <fieldset disabled={this.props.checkForExistingUserSuccess}>
-          <FormInputFieldWithBottomLabelContainer fieldName="firstName" fieldType="text" fieldHeaderType="h4"
-                                                  fieldMessage={messages.firstName} containerTag="span"
-                                                  containerProps={{ className: 'display-inline' }} formName={formName}
-                                                  getFieldValidator={this.getValidator} headerTag="h1"
-                                                  headerMessage={messages.registerAsLoaner} />
-
-          <FormInputFieldWithBottomLabelContainer fieldName="lastName" fieldType="text" fieldHeaderType="h4"
-                                                  fieldMessage={messages.lastName} containerTag="span"
-                                                  containerProps={{ className: 'display-inline' }} formName={formName}
-                                                  getFieldValidator={this.getValidator} />
+          <legend><FormattedMessage {...messages.nameLabel} /></legend>
+          <FormInputField name="firstName" message={messages.firstName} formName={formName} />
+          <FormInputField name="lastName" message={messages.lastName} formName={formName} getValidator={this.getValidator} />
         </fieldset>
         <fieldset disabled={this.props.checkForExistingUserSuccess}>
-          <legend><FormattedMessage {...messages.personInfoLegend} /></legend>
+          <legend><FormattedMessage {...messages.birthdate} /></legend>
           <div className="date-of-birth">
-            <FormInputFieldWithBottomLabelContainer fieldName="day" fieldType="number" fieldHeaderType="h4"
-                                                    fieldMessage={messages.day} containerTag="div"
-                                                    containerProps={{ className: 'item' }} formName={formName}
-                                                    getFieldValidator={this.getValidator} headerTag="h2"
-                                                    headerMessage={messages.birthdate} />
-
-            <FormInputFieldWithBottomLabelContainer fieldName="month" fieldType="number" fieldHeaderType="h4"
-                                                    fieldMessage={messages.month} containerTag="div"
-                                                    containerProps={{ className: 'item' }} formName={formName}
-                                                    getFieldValidator={this.getValidator} />
-
-            <FormInputFieldWithBottomLabelContainer fieldName="year" fieldType="number" fieldHeaderType="h4"
-                                                    fieldMessage={messages.year} containerTag="div"
-                                                    containerProps={{ className: 'item' }} formName={formName}
-                                                    getFieldValidator={this.getValidator} />
+            <FormInputField name="day" message={messages.day} formName={formName} getValidator={this.getValidator} />
+            <FormInputField name="month" message={messages.month} formName={formName} getValidator={this.getValidator} />
+            <FormInputField name="year" message={messages.year} formName={formName} getValidator={this.getValidator} />
           </div>
-          <div className="ssn-info">
-            <h3><a onClick={this.props.registrationActions.showSSNInfo}
-                   title="ssnLink"><FormattedMessage {...messages.ssnLink} /></a>
-            </h3>
-            {this.props.showSSNInfo ? this.renderSSNInfo() : ''}
-          </div>
-          <FormInputFieldWithBottomLabelContainer fieldName="ssn" fieldType="number" fieldHeaderType="h4"
-                                                  fieldMessage={messages.ssn} containerTag="span"
-                                                  containerProps={{ className: 'display-inline' }} formName={formName}
-                                                  getFieldValidator={this.getValidator} headerTag="h2"
-                                                  headerMessage={messages.ssnHeader} />
-
+        </fieldset>
+        <fieldset disabled={this.props.checkForExistingUserSuccess}>
+          <legend><FormattedMessage {...messages.ssnHeader} /></legend>
+          <p>
+            <a onClick={this.props.registrationActions.showSSNInfo} title="ssnLink">
+              <FormattedMessage {...messages.ssnLink} />
+            </a>
+          </p>
+          {this.props.showSSNInfo ? this.renderSSNInfo() : ''}
+          <FormInputField name="ssn" message={messages.ssn} formName={formName} getValidator={this.getValidator} />
           {this.props.isCheckingForExistingUser ? this.renderCheckingForExistingUser() : ''}
           {/* TODO: also handle all fields empty */}
-          <button className="black-btn" type="submit" disabled={submitting || this.hasInvalidFormFields()}
-                  data-automation-id="check_existing_user_button">
-            <FormattedMessage {...messages.checkForExistingUser} />
-          </button>
-
-          <h3><a onClick={this.handleCancel} title="cancel"><FormattedMessage {...messages.cancel} /></a></h3>
+          {this.props.checkForExistingUserSuccess ? null : this.renderContinueAndCancelButtons(submitting)}
         </fieldset>
         {this.props.checkForExistingUserSuccess ? this.renderCheckForExistingUserSuccess() : ''}
         {this.props.checkForExistingUserFailure ? this.renderCheckForExistingUserError(this.props.registrationError) : ''}
@@ -158,7 +136,7 @@ const messages = defineMessages({
   checkForExistingUser: {
     id: 'RegistrationFormPartOne.checkForExistingUser',
     description: 'The user validation button in registration form',
-    defaultMessage: 'Validate'
+    defaultMessage: 'Continue'
   },
   checkingForExistingUser: {
     id: 'RegistrationFormPartOne.checkingForExistingUser',
@@ -189,6 +167,11 @@ const messages = defineMessages({
     id: 'RegistrationFormPartOne.registerAsLoaner',
     description: 'The header text of the modal dialog',
     defaultMessage: 'Register as loaner'
+  },
+  nameLabel: {
+    id: 'RegistrationFormPartOne.nameLabel',
+    description: 'Label for the fieldset (legend) names',
+    defaultMessage: 'Name'
   },
   firstName: {
     id: 'RegistrationFormPartOne.firstName',
@@ -228,7 +211,7 @@ const messages = defineMessages({
   ssnHeader: {
     id: 'RegistrationFormPartOne.ssnHeader',
     description: 'Header for input field social security number',
-    defaultMessage: 'ID-number'
+    defaultMessage: 'Social security number'
   },
   ssn: {
     id: 'RegistrationFormPartOne.ssnSpec',

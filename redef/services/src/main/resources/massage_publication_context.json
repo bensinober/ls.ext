@@ -27,8 +27,9 @@
     },
     "Publication": "deichman:Publication",
     "partTitle": "deichman:partTitle",
+    "language": "deichman:language",
     "languages": {
-      "@id": "deichman:language",
+      "@id": "deichman:languages",
       "@container": "@set"
     },
     "type": "@type",
@@ -94,8 +95,13 @@
     "coreographer": "http://data.deichman.no/role#coreographer",
     "recordId": "deichman:recordID",
     "agents": "deichman:agents",
-    "abstract": "deichman:abstract",
+    "summary": "deichman:summary",
     "dewey": "deichman:dewey",
-    "nationality": "deichman:nationality"
+    "nationality": "deichman:nationality",
+    "title": "deichman:title",
+    "litform": "deichman:litform",
+    "subtitles": "deichman:subtitles",
+    "isbn": "deichman:isbn",
+    "compType": "deichman:compType"
   }
 }

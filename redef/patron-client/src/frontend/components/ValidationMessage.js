@@ -13,7 +13,7 @@ ValidationMessage.propTypes = {
   message: PropTypes.string.isRequired
 }
 
-const messages = defineMessages({
+export const messages = defineMessages({
   required: {
     id: 'ValidationMessage.required',
     description: 'Displayed below a field when not filled out',
@@ -63,6 +63,31 @@ const messages = defineMessages({
     id: 'ValidationMessage.genericFieldError',
     description: 'Displayed when no other errors match',
     defaultMessage: 'Field input generated validation error'
+  },
+  emailOrMobileRequired: {
+    id: 'ValidationMessage.emailOrMobileRequired',
+    description: 'Displayed if neither email or phone number is entered',
+    defaultMessage: 'Either email or mobile number is required'
+  },
+  invalidZipcode: {
+    id: 'ValidationMessage.invalidZipcode',
+    description: 'Displayed if an invalid zipcode is entered',
+    defaultMessage: 'Invalid zipcode, must be 4 digits'
+  },
+  invalidCity: {
+    id: 'ValidationMessage.invalidCity',
+    description: 'Displayed if an invalid string is entered, only norwegian characters',
+    defaultMessage: 'Invalid city entered, must be two or more characters, only norwegian'
+  },
+  invalidPhoneNumber: {
+    id: 'ValidationMessage.invalidPhoneNumber',
+    description: 'Displayed if an invalid phone number is entered',
+    defaultMessage: 'Invalid phone number, only norwegian numbers allowed'
+  },
+  invalidSSN: {
+    id: 'ValidationMessage.invalidSSN',
+    description: 'Displayed if entered ID-number is not valid',
+    defaultMessage: 'Invalid ID-number'
   }
 })
 

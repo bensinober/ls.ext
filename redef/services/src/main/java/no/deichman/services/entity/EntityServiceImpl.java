@@ -56,6 +56,7 @@ public final class EntityServiceImpl implements EntityService {
     private static final String FORMAT_TTL_FILE = "format.ttl";
     private static final String NATIONALITY_TTL_FILE = "nationality.ttl";
     private static final String MEDIATYPE_TTL_FILE = "mediaType.ttl";
+    private static final String LITERARYFORM_TTL_FILE = "literaryForm.ttl";
     private final RDFRepository repository;
     private final KohaAdapter kohaAdapter;
     private final Property mainTitleProperty;
@@ -80,7 +81,7 @@ public final class EntityServiceImpl implements EntityService {
     private final Property formatLabelProperty;
     private final Property adaptaionProperty;
     private final Property fictionNonFictionProperty;
-    private final Property abstractProperty;
+    private final Property summaryProperty;
     private final Property audienceProperty;
 
     private final String nonfictionResource = "http://data.deichman.no/fictionNonfiction#nonfiction";
@@ -111,7 +112,7 @@ public final class EntityServiceImpl implements EntityService {
         formatLabelProperty = ResourceFactory.createProperty(BaseURI.ontology("formatLabel"));
         adaptaionProperty = ResourceFactory.createProperty(BaseURI.ontology("adaptationLabel"));
         fictionNonFictionProperty = ResourceFactory.createProperty(BaseURI.ontology("fictionNonfiction"));
-        abstractProperty = ResourceFactory.createProperty(BaseURI.ontology("abstract"));
+        summaryProperty = ResourceFactory.createProperty(BaseURI.ontology("summary"));
         audienceProperty = ResourceFactory.createProperty(BaseURI.ontology("audience"));
 
     }
@@ -161,6 +162,10 @@ public final class EntityServiceImpl implements EntityService {
         return getLinkedResource(input, "mediaType", MEDIATYPE_TTL_FILE);
     }
 
+    private Model getLinkedLiteraryFormResource(Model input) {
+        return getLinkedResource(input, "literaryForm", LITERARYFORM_TTL_FILE);
+    }
+
     private Model getLinkedResource(Model input, String path, String filename) {
         NodeIterator objects = input.listObjects();
         if (objects.hasNext()) {
@@ -207,6 +212,7 @@ public final class EntityServiceImpl implements EntityService {
         m = getLinkedAudienceResource(m);
         m = getLinkedNationalityResource(m);
         m = getLinkedMediaTypeResource(m);
+        m = getLinkedLiteraryFormResource(m);
         return m;
     }
 
@@ -493,7 +499,7 @@ public final class EntityServiceImpl implements EntityService {
                     marcRecord.addMarcField(MarcConstants.FIELD_338, MarcConstants.SUBFIELD_A, stmt.getLiteral().getString());
                 } else if (pred.equals(adaptaionProperty) || pred.equals(audienceProperty)) {
                     marcRecord.addMarcField(MarcConstants.FIELD_385, MarcConstants.SUBFIELD_A, stmt.getLiteral().getString());
-                } else if (pred.equals(abstractProperty)) {
+                } else if (pred.equals(summaryProperty)) {
                     marcRecord.addMarcField(MarcConstants.FIELD_520, MarcConstants.SUBFIELD_A, stmt.getLiteral().getString());
                 }
             }

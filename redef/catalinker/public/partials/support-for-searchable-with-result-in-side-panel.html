@@ -36,7 +36,7 @@
                                 {{# widgetOptions.showSelectItem}}
                                     <span class="search-result-work-selector pure-u-2-24">
                                         <input class="select-work-radio" type="radio" checked="{{isChecked}}"
-                                               on-click="setResourceAndWorkResource:{{items[itemIndex]}},{{origin}},'Person'"/>
+                                               on-click="selectSearchableItem:{{origin}},{{items[itemIndex].name}},{subItem: true}"/>
                                     </span>
                                 {{/}}
                             </div>
@@ -87,6 +87,14 @@
                     <div class="pure-u-2-3"><a on-click="cancelEdit">Avbryt</a></div>
                     <button tabindex="0" class="pure-u-1-3 pure-button pure-button-primary"
                        on-click="createNewResource:{{searchResult.origin}}">Opprett</button>
+                </div>
+            </span>
+        {{else}}
+        <span class="pure-u-1-1">
+                <div class="add-new-btn-row">
+                    <div class="pure-u-2-3"></div>
+                    <button tabindex="0" class="pure-u-1-3 pure-button pure-button-primary"
+                            on-click="cancelEdit">Ferdig</button>
                 </div>
             </span>
         {{/if}}

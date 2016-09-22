@@ -1,6 +1,7 @@
 PREFIX deich: <__ONTOLOGY__>
 PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX  role: <http://data.deichman.no/role#>
+PREFIX   afn: <http://jena.apache.org/ARQ/function#>
 
 CONSTRUCT {
         <__PUBLICATIONURI__> a deich:Publication ;
@@ -8,7 +9,8 @@ CONSTRUCT {
                deich:partTitle ?pubPartTitle ;
                deich:norwegianTitle ?norwegianTitle ;
                deich:englishTitle ?enlishTitle ;
-               deich:language ?language ;
+               deich:languages ?language ;
+               deich:language ?langCode ;
                deich:format ?format ;
                deich:publicationYear ?pubPublicationYear ;
                deich:firstPublicationYear ?workPublicationYear ;
@@ -26,12 +28,19 @@ CONSTRUCT {
                ?contribRoleURI ?contribAgentName ;
                deich:mainEntryName ?mainEntryName ;
                deich:recordID ?recordId ;
-               deich:abstract ?abstract ;
+               deich:summary ?summary ;
                deich:formatNo ?formatNo ;
                deich:ageLimit ?ageLimit ;
                deich:series ?seriesTitle ;
                deich:dewey ?dewey ;
-               deich:nationality ?nationLabel .
+               deich:nationality ?nationLabel ;
+               deich:title ?pubMainTitle ;
+               deich:title ?pubPartTitle ;
+               deich:title ?pubSubtitle ;
+               deich:litform ?litform ;
+               deich:subtitles ?subtitles ;
+               deich:isbn ?isbn ;
+               deich:compType ?compTypeLabel .
   ?mediaType a deich:Mediatype ;
                deich:format ?mtFormat .
     ?contrib a deich:Contribution ;
@@ -51,8 +60,15 @@ WHERE {
             BIND(str(?work) AS ?workUri ) }
   UNION { <__PUBLICATIONURI__> deich:mainTitle ?pubMainTitle }
   UNION { <__PUBLICATIONURI__> deich:partTitle ?pubPartTitle }
+  UNION { <__PUBLICATIONURI__> deich:subtitle ?pubSubtitle }
   UNION { <__PUBLICATIONURI__> deich:hasHoldingBranch ?branch }
-  UNION { <__PUBLICATIONURI__> deich:language ?languageO . BIND(str(?languageO) AS ?language) }
+  UNION { <__PUBLICATIONURI__> deich:isbn ?isbn }
+  UNION { <__PUBLICATIONURI__> deich:language ?languageO .
+          BIND(str(?languageO) AS ?language) .
+          BIND(afn:substr(?language, 29) AS ?langCode) }
+  UNION { <__PUBLICATIONURI__> deich:hasSubtitles ?subLang .
+            BIND(str(?subLang) AS ?subLangStr) .
+            BIND(afn:substr(?subLangStr, 29) AS ?subtitles) }
   UNION { <__PUBLICATIONURI__> deich:format ?formatO . BIND(str(?formatO) AS ?format) }
   UNION { <__PUBLICATIONURI__> deich:format ?formatURI .
           ?formatURI rdfs:label ?formatNoLang .
@@ -60,7 +76,7 @@ WHERE {
           FILTER(lang(?formatNoLang) = "no") }
   UNION { <__PUBLICATIONURI__> deich:publicationYear ?pubPublicationYearO . BIND(str(?pubPublicationYearO) AS ?pubPublicationYear) }
   UNION { <__PUBLICATIONURI__> deich:hasImage ?img }
-  UNION { <__PUBLICATIONURI__> deich:abstract ?abstract }
+  UNION { <__PUBLICATIONURI__> deich:hasSummary ?summary }
   UNION { <__PUBLICATIONURI__> deich:ageLimit ?maybeAgeLimit . BIND(IF(BOUND(?maybeAgeLimit), ?maybeAgeLimit, "0") AS ?ageLimit) }
 
   UNION { <__PUBLICATIONURI__> deich:inSerial ?serialBnode .
@@ -90,7 +106,7 @@ WHERE {
                deich:partTitle ?englishPartTitle ;
                deich:language <http://lexvo.org/id/iso639-3/eng> .
         }
-        BIND(IF(BOUND(?englishPartTitle), CONCAT(?englishMainTitle, " — ", ?englishPartTitle), ?englishMainTitle) AS ?norwegianTitle)
+        BIND(IF(BOUND(?englishPartTitle), CONCAT(?englishMainTitle, " — ", ?englishPartTitle), ?englishMainTitle) AS ?englishTitle)
   }
 
   UNION {
@@ -108,7 +124,9 @@ WHERE {
       }
 
   # 3. Information from work:
-
+  UNION {  <__PUBLICATIONURI__> deich:publicationOf ?work .
+           ?work a deich:Work ; deich:hasCompositionType ?compType .
+           ?compType deich:prefLabel ?compTypeLabel . }
   UNION {  <__PUBLICATIONURI__> deich:publicationOf ?work .
            ?work a deich:Work ; deich:audience ?audienceO .
            BIND(str(?audienceO) AS ?audience) }
@@ -118,6 +136,11 @@ WHERE {
   UNION { <__PUBLICATIONURI__> deich:publicationOf ?work .
           ?work a deich:Work ; deich:hasClassification ?classEntry .
           ?classEntry deich:hasClassificationNumber ?dewey . }
+  UNION { <__PUBLICATIONURI__> deich:publicationOf ?work .
+            ?work a deich:Work ; deich:literaryForm ?l .
+            ?l rdfs:label ?litLabel .
+            BIND(str(?litLabel) AS ?litform)
+            FILTER(lang(?litLabel) = "no") }
 
   UNION {
     {

@@ -1,6 +1,6 @@
 .search-box {
   background: $greyColor;
-  padding: rhythm(2);
+  padding: rhythm(1.5);
   border-bottom: 1px solid $mediumGreyColor;
   form {
     label {
@@ -25,9 +25,8 @@
   input {
     border: none;
     color: $darkGreyColor;
-    font-size: rhythm(4);
-    padding: rhythm(0.5) rhythm(0.5) rhythm(0.5) 1.15em;
-    background-image: url('/images/icon-searchbar-search.svg');
+    font-size: rhythm(2.5);
+    padding: rhythm(0.5) rhythm(1);
     background-repeat: no-repeat;
     background-position: 0.5em center;
     width: 100%;
@@ -38,7 +37,7 @@
     background: $redColor;
     text-transform: uppercase;
     color: $white;
-    font-size: rhythm(4);
+    font-size: rhythm(2.5);
     width: 100%;
     text-align: center;
     padding: rhythm(0.5);
@@ -53,6 +52,7 @@
 @include breakpoint($small) {
   .search-box-wrapper {
     @include wrapper-container;
+    padding-bottom: 0;
   }
   .search-box {
     padding: 0 rhythm(2) rhythm(2);
@@ -78,13 +78,13 @@
     }
     input {
       font-size: rhythm(4);
-      padding: rhythm(1) rhythm(0.5) rhythm(1) 2.5em;
+      padding: rhythm(1) rhythm(0.5) rhythm(1) rhythm(2);
       background-position: 1em center;
     }
     button {
       font-weight: bold;
       padding: rhythm(1);
-      
+      font-size: rhythm(4);
     }
   }
 }

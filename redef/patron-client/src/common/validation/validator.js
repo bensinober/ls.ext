@@ -5,7 +5,7 @@ module.exports = form => values => {
     return form[ field ].required
   })
   const errors = {}
-  Object.keys(values).forEach(field => {
+  Object.keys(form).forEach(field => {
     const value = values[ field ]
     if (requiredFields.includes(field) && !value) {
       errors[ field ] = 'required'
@@ -21,5 +21,8 @@ module.exports = form => values => {
       }
     }
   })
+  if (form.email && form.mobile && !values.email && !values.mobile) {
+    errors.email = 'emailOrMobileRequired'
+  }
   return errors
 }

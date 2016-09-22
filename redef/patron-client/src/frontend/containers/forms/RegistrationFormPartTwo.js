@@ -10,11 +10,9 @@ import ValidationMessage from '../../components/ValidationMessage'
 import fields from '../../../common/forms/registrationPartTwo'
 import validator from '../../../common/validation/validator'
 import asyncValidate from '../../utils/asyncValidate'
-import FormInputFieldWithBottomLabelContainer from '../../components/FormInputFieldWithBottomLabelContainer'
 import FormInputField from '../../components/FormInputField'
 import FormInputFieldTermsAndConditions from '../../components/FormInputFieldTermsAndConditions'
 import FormSelectFieldLibrary from '../../components/FormSelectFieldLibrary'
-import FormSelectFieldGender from '../../components/FormSelectFieldGender'
 
 const formName = 'registrationPartTwo'
 
@@ -51,9 +49,7 @@ class RegistrationFormPartTwo extends React.Component {
 
   getValidator (field) {
     if (field.meta.touched && field.meta.error) {
-      return <div style={{ color: 'red' }}><ValidationMessage message={field.meta.error} /></div>
-    } else {
-      return <div>&nbsp;</div>
+      return <div className="feedback"><ValidationMessage message={field.meta.error} /></div>
     }
   }
 
@@ -71,61 +67,38 @@ class RegistrationFormPartTwo extends React.Component {
       <form onSubmit={this.props.handleSubmit(this.handleRegistration)}>
         <fieldset>
           <legend><FormattedMessage {...messages.contactInfoLegend} /></legend>
-          <FormInputFieldWithBottomLabelContainer fieldName="email" fieldType="email" fieldHeaderType="h4"
-                                                  fieldMessage={messages.email} containerTag="span"
-                                                  containerProps={{ className: 'display-inline' }} formName={formName}
-                                                  getFieldValidator={this.getValidator} />
-
-          <FormInputFieldWithBottomLabelContainer fieldName="mobile" fieldType="text" fieldHeaderType="h4"
-                                                  fieldMessage={messages.mobile} containerTag="span"
-                                                  containerProps={{ className: 'display-inline' }} formName={formName}
-                                                  getFieldValidator={this.getValidator} />
+          <FormInputField name="email" message={messages.email} formName={formName} type="email" getValidator={this.getValidator} />
+          <FormInputField name="mobile" message={messages.mobile} formName={formName} getValidator={this.getValidator} />
           <address>
-            <FormInputField name="address" type="text" message={messages.address} isLabelOverInput={false}
-                            hasLabel="hasLabel" headerType="h4" formName={formName} getValidator={this.getValidator} />
-
-            <FormInputFieldWithBottomLabelContainer fieldName="zipcode" fieldType="text" fieldHeaderType="h4"
-                                                    fieldMessage={messages.zipcode} containerTag="span"
-                                                    containerProps={{ className: 'display-inline' }} formName={formName}
-                                                    getFieldValidator={this.getValidator} />
-
-            <FormInputFieldWithBottomLabelContainer fieldName="city" fieldType="text" fieldHeaderType="h4"
-                                                    fieldMessage={messages.city} containerTag="span"
-                                                    containerProps={{ className: 'display-inline' }} formName={formName}
-                                                    getFieldValidator={this.getValidator} />
-
-            <FormInputField name="country" type="text" message={messages.country} isLabelOverInput={false}
-                            hasLabel="hasLabel" headerType="h4" formName={formName} getValidator={this.getValidator} />
-
+            <FormInputField name="address" message={messages.address} formName={formName} getValidator={this.getValidator} />
+            <FormInputField name="zipcode" message={messages.zipcode} formName={formName} getValidator={this.getValidator} />
+            <FormInputField name="city" message={messages.city} formName={formName} getValidator={this.getValidator} />
           </address>
-          <FormSelectFieldGender message={messages.gender} headerTag="h4" options={[ 'male', 'female' ]}
-                                 optionMessages={{ male: messages.male, female: messages.female }} />
         </fieldset>
-
         <fieldset>
-          <legend><FormattedMessage {...messages.personSettingsLegend} /></legend>
-          <FormInputFieldWithBottomLabelContainer fieldName="pin" fieldType="password" fieldHeaderType="h4"
-                                                  fieldMessage={messages.pin} containerTag="span"
-                                                  containerProps={{}} formName={formName}
-                                                  headerMessage={messages.choosePin}
-                                                  getFieldValidator={this.getValidator} headerTag="h2" />
-
-          <FormInputField name="repeatPin" type="password" message={messages.repeatPin} isLabelOverInput={false}
-                          hasLabel="hasLabel" headerType="h4" formName={formName} getValidator={this.getValidator} />
-
-          <FormSelectFieldLibrary libraries={this.props.libraries} message={messages.chooseBranch} headerTag="h2"
-                                  name="chooseBranch" />
-
-          <FormInputFieldTermsAndConditions formName={formName} handleAcceptTerms={this.handleAcceptTerms}
+          <legend><FormattedMessage {...messages.choosePin} /></legend>
+          <FormInputField name="pin" message={messages.pin} formName={formName} type="password" getValidator={this.getValidator} />
+          <FormInputField name="repeatPin" type="password" message={messages.repeatPin} formName={formName} getValidator={this.getValidator} />
+          <FormSelectFieldLibrary libraries={this.props.libraries} message={messages.chooseBranch} name="chooseBranch" />
+          <p>
+            <a href="/terms" target="_blank">
+              <FormattedMessage {...messages.acceptTermsLink} />
+            </a>
+          </p>
+          <FormInputFieldTermsAndConditions formName={formName}
+                                            handleAcceptTerms={this.handleAcceptTerms}
                                             name="acceptTerms"
-                                            message={messages.acceptTermsLink} getValidator={this.getValidator}
-                                            type="checkbox" />
-
-          <button className="black-btn" type="submit" disabled={submitting || this.hasInvalidFormFields()}
-                  data-automation-id="register_button">
-            <FormattedMessage {...messages.register} />
-          </button>
-          <h3><a onClick={this.handleCancel} title="cancel"><FormattedMessage {...messages.cancel} /></a></h3>
+                                            message={messages.acceptTermsLabel}
+                                            getValidator={this.getValidator}
+                                            type="checkbox"
+          />
+          <p>
+            <button className="black-btn" type="submit" disabled={submitting || this.hasInvalidFormFields()}
+                    data-automation-id="register_button">
+              <FormattedMessage {...messages.register} />
+            </button>
+            <a className="cancel-link" onClick={this.handleCancel} title="cancel"><FormattedMessage {...messages.cancel} /></a>
+          </p>
         </fieldset>
       </form>
     )
@@ -186,12 +159,12 @@ const messages = defineMessages({
   choosePin: {
     id: 'RegistrationFormPartTwo.choosePin',
     description: 'Label for choosing pin field',
-    defaultMessage: 'Velg deg en pin kode'
+    defaultMessage: 'Choose PIN (4 digits)'
   },
   repeatPin: {
     id: 'RegistrationFormPartTwo.repeatPin',
     description: 'Label for repeating chosen pin field',
-    defaultMessage: 'Bekreft PIN'
+    defaultMessage: 'Confirm PIN'
   },
   register: {
     id: 'RegistrationFormPartTwo.register',
@@ -221,11 +194,16 @@ const messages = defineMessages({
   chooseBranch: {
     id: 'RegistrationFormPartTwo.chooseBranch',
     description: 'Choose home branch label',
-    defaultMessage: 'Choose Your Home Branch'
+    defaultMessage: 'Choose Your Home Library'
   },
   acceptTermsLink: {
     id: 'RegistrationFormPartTwo.acceptTermsLink',
     description: 'Link text for Terms and Conditions',
+    defaultMessage: 'Open terms and conditions in a new window'
+  },
+  acceptTermsLabel: {
+    id: 'RegistrationFormPartTwo.acceptTermsLabel',
+    description: 'Text used in label for accept terms and conditions checkbox',
     defaultMessage: 'Accept Terms and Conditions'
   },
   cancel: {

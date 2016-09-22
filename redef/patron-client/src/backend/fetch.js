@@ -13,10 +13,9 @@ module.exports = (app) => {
               console.log(`Call to ${url} with options ${JSON.stringify(opts)}:`)
               console.log(`${res.status}: ${JSON.stringify(json)}`)
             }
-            if (json.error === 'Authentication required.') {
+            if (json.error === 'Authentication required.' || json.error === 'Authentication failure.') {
               // Unauthorized; we try to renew session and then retry request.
-
-              return isofetch('http://koha:8081/api/v1/auth/session', {
+              return isofetch('http://xkoha:8081/api/v1/auth/session', {
                 method: 'POST',
                 headers: {
                   'Accept': 'application/json, application/xml, text/plain, text/html, *.*',

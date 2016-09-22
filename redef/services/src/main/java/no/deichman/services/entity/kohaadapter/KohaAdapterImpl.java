@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static javax.ws.rs.core.Response.Status.OK;
 
 /**
@@ -36,7 +37,7 @@ public final class KohaAdapterImpl implements KohaAdapter {
     private NewCookie sessionCookie;
 
     public KohaAdapterImpl(String kohaPort) {
-        this.kohaPort = kohaPort != null ? kohaPort : System.getProperty("KOHA_PORT", "http://koha:8081");
+        this.kohaPort = kohaPort != null ? kohaPort : System.getProperty("KOHA_PORT", "http://xkoha:8081");
         log.info("Koha adapter started with kohaPort: " + this.kohaPort);
     }
 
@@ -123,12 +124,24 @@ public final class KohaAdapterImpl implements KohaAdapter {
             login();
         }
         invocationBuilder.cookie(sessionCookie.toCookie());
-        return invocationBuilder.delete();
+        Response response = invocationBuilder.delete();
+        if (response.getStatus() == FORBIDDEN.getStatusCode() || response.getStatus() == UNAUTHORIZED.getStatusCode()) {
+            // Session has expired; try login again
+            login();
+            response = invocationBuilder.delete();
+        }
+        return response;
     }
 
     private Response requestNewRecord(MarcRecord marcRecord) {
         String url = kohaPort + "/api/v1/biblios";
-        return sendMarcRecord("POST", url, marcRecord);
+        Response response = sendMarcRecord("POST", url, marcRecord);
+        if (response.getStatus() == FORBIDDEN.getStatusCode() || response.getStatus() == UNAUTHORIZED.getStatusCode()) {
+            // Session has expired; try login again
+            login();
+            response = sendMarcRecord("POST", url, marcRecord);
+        }
+        return response;
     }
 
     @Override
@@ -162,7 +175,7 @@ public final class KohaAdapterImpl implements KohaAdapter {
         }
 
         Response response = requestNewRecord(marcRecord);
-        if (response.getStatus() == FORBIDDEN.getStatusCode()) {
+        if (response.getStatus() == FORBIDDEN.getStatusCode() || response.getStatus() == UNAUTHORIZED.getStatusCode()) {
             // Session has expired; try login again
             login();
             response = requestNewRecord(marcRecord);
@@ -191,7 +204,7 @@ public final class KohaAdapterImpl implements KohaAdapter {
 
         Response response = requestExpandedBiblio(recordId);
 
-        if (response.getStatus() == FORBIDDEN.getStatusCode()) {
+        if (response.getStatus() == FORBIDDEN.getStatusCode() || response.getStatus() == UNAUTHORIZED.getStatusCode()) {
             // Session has expired; try login again
             login();
             response = requestExpandedBiblio(recordId);
@@ -211,7 +224,7 @@ public final class KohaAdapterImpl implements KohaAdapter {
 
         Response response = requestBiblio(recordId);
 
-        if (response.getStatus() == FORBIDDEN.getStatusCode()) {
+        if (response.getStatus() == FORBIDDEN.getStatusCode() || response.getStatus() == UNAUTHORIZED.getStatusCode()) {
             // Session has expired; try login again
             login();
             response = requestBiblio(recordId);

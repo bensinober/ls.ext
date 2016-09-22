@@ -8,6 +8,11 @@
   font-size: 1em;
   border-radius: 2px;
 
+  &:hover {
+    background: $darkGreyColor;
+    cursor: pointer;
+  }
+
   a, a:hover {
     text-decoration: none;
     color: $white;
