@@ -1,5 +1,6 @@
 package no.deichman.services.entity.repository;
 
+import com.google.common.collect.ImmutableMap;
 import no.deichman.services.entity.EntityType;
 import no.deichman.services.entity.patch.Patch;
 import no.deichman.services.rdf.RDFModelUtil;
@@ -32,7 +33,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.jena.rdf.model.ResourceFactory.createTypedLiteral;
 
 /**
- * Responsibility: TODO.
+ * Responsibility: Formulate SPARQL queries.
  */
 public final class SPARQLQueryBuilder {
 
@@ -373,7 +374,7 @@ public final class SPARQLQueryBuilder {
             inserts.add("?pub :hasHomeBranch \"" + StringUtils.join(homeBranches.split(","), "\",\"") + "\"");
         }
         if (availableBranches != null && !availableBranches.equals("")) {
-            inserts.add("?pub :hasAvailableBranch \"" + StringUtils.join(availableBranches.split(","), "\",\"")  + "\"");
+            inserts.add("?pub :hasAvailableBranch \"" + StringUtils.join(availableBranches.split(","), "\",\"") + "\"");
         }
         inserts.add("?pub :hasNumItems " + numItems);
         String q = format(""
@@ -949,12 +950,12 @@ public final class SPARQLQueryBuilder {
                 break;
             case EVENT:
             case SUBJECT:
-                queryString +=""
+                queryString += ""
                         + "      { ?resource :subject <__URI__> }\n"
                         + "UNION { ?resource :publicationOf ?work . ?work :subject <__URI__> }\n";
                 break;
             case GENRE:
-                queryString +=""
+                queryString += ""
                         + "      { ?resource :publicationOf ?work . ?work :genre <__URI__> }\n";
                 break;
             case PLACE:
@@ -991,7 +992,7 @@ public final class SPARQLQueryBuilder {
                 break;
             default:
                 break;
-            }
+        }
 
         queryString += "\nFILTER(isIRI(?resource)) }\n";
 
@@ -1008,12 +1009,22 @@ public final class SPARQLQueryBuilder {
                 + "     duo:templateMatch [ \n"
                 + "      %s\n"
                 + "   ]\n"
-                + "}\n", BaseURI.ontology(), EntityType.get(type).getRdfType(), queryParameters
+                + "}\n", BaseURI.ontology(), EntityType.get(type).getRdfType(),
+                (queryParameters.isEmpty() ? ImmutableMap.of("http://dummy/", "empty") : queryParameters)
                 .entrySet()
                 .stream()
                 .map(entry -> format("<%s> <%s> ", entry.getKey(), entry.getValue()))
                 .collect(joining(";\n")));
 
         return QueryFactory.create(query);
+    }
+
+    public String removeTemplateMatchTriples() {
+        return format(""
+                + "PREFIX duo: <%sutility#> \n"
+                + "DELETE { ?uri duo:templateMatch ?templateMatch . ?templateMatch ?condPred ?condObj }\n"
+                + "WHERE { \n"
+                + "   ?uri duo:templateMatch ?templateMatch . ?templateMatch ?condPred ?condObj \n"
+                + "}\n", BaseURI.root());
     }
 }
