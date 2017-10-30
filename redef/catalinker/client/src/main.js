@@ -1539,7 +1539,7 @@
               (unPrefix(ownerInput.domain) === options.wrappedIn || !options.wrappedIn) &&
               (options.wrapperObject && options.wrapperObject.isA(options.wrappedIn) || !options.wrapperObject)) {
               let inputParentOfCreateNewResourceFormKeypath = ractive.get(`inputLinks.${input.belongsToCreateResourceFormOfInput}`)
-              let ownerValueIndex = ownerInput.values.map(value => value.current.value).indexOf(root.id)
+              let ownerValueIndex = ownerInput[ valuesField ].map(value => value.current.value).indexOf(root.id)
               ractive.set(`${inputParentOfCreateNewResourceFormKeypath}.suggestedValuesForNewResource.${ownerValueIndex}`, root)
               skipRest = true
             } else {
@@ -1550,7 +1550,7 @@
                   return function (_root) {
                     _root = _root || root
                     input.offset = input.offset || {}
-                    let offset = (input.type !== 'select-predefined-value' && input.multiple) ? (_.filter(input.values || [], (val) => ![ undefined, '', null ].includes(val.current.value))).length : 0
+                    let offset = (input.type !== 'select-predefined-value' && input.multiple) ? (_.filter(input[ valuesField ] || [], (val) => ![ undefined, '', null ].includes(val.current.value))).length : 0
                     if (input.isSubInput) {
                       offset = 0
                     }
@@ -2141,7 +2141,7 @@
           predicate: ontologyUri + compoundInput.subInputs.rdfProperty,
           ranges: compoundInput.subInputs.ranges,
           range: compoundInput.subInputs.range,
-          inputGroupRequiredVetoes: [],
+          inputGroupRequiredVetoes: [ '' ],
           accordionHeader: compoundInput.subInputs.accordionHeader,
           pagination: compoundInput.subInputs.pagination,
           objectSortOrder: compoundInput.subInputs.objectSortOrder,
@@ -2198,7 +2198,7 @@
           }
           // prefill vetoes according to inputs' requiredness
           if (subInput.required) {
-            currentInput.inputGroupRequiredVetoes.push(`${subInputIndex}`)
+            currentInput.inputGroupRequiredVetoes[ 0 ] += `${subInputIndex}`
           }
 
           copyResourceForms(newSubInput.input, compoundInput.isMainEntry)
@@ -4392,7 +4392,8 @@
                     values.oldSubjectType = values.subjectType
                   }
                   try {
-                    promises.push(ractive.push(`${input.keypath}.values`, values))
+                    mainInput.values.push(values)
+                    promises.push(ractive.update())
                   } catch (e) {
                     // nop
                   }
@@ -4403,7 +4404,9 @@
                 positionSupportPanels(undefined, tabIdFromKeypath(event.keypath))
                 copyAdditionalSuggestionsForGroup(Number(event.keypath.split('.')[ 1 ]))
                 ractive.update().then(function () {
-                  heightAligned(document.main.$(event.node).closest('.height-aligned'))
+                  const node = document.main.$(event.node)
+                  heightAligned(node.closest('.height-aligned'))
+                  node.closest('.panel-part').find('[contenteditable=true],input[value=""]').first().focus()
                 })
               },
               // patchResource creates a patch request based on previous and current value of
@@ -5463,15 +5466,35 @@
             const inputKeypath = grandParentOf(grandParentOf(keypath))
             const inputGroupKeypath = parentOf(grandParentOf(inputKeypath))
             const input = ractive.get(inputKeypath)
-            const newStringValid = (typeof newValue === 'string' && /^\S+.*\S$|^\S?$/.test(newValue.replace(/\n/g, '')))
-            const oldStringValid = (typeof oldvalue === 'string' && /^\S+.*\S$|^\S?$/.test(oldvalue.replace(/\n/g, '')))
-            const existingVetoes = ractive.get(`${inputGroupKeypath}.inputGroupRequiredVetoes.${valueIndex}`) || []
-            if (existingVetoes.length > 0 || input.required || !newStringValid || (newStringValid && !oldStringValid)) {
+            const newStringInvalid = (typeof newValue === 'string' && !(/^\S+.*\S$|^\S?$/.test(newValue.replace(/\n/g, ''))))
+            input.parentInput.inputGroupRequiredVetoes[ valueIndex ] = input.parentInput.inputGroupRequiredVetoes[ valueIndex ] || ''
+            if (input.required || newStringInvalid || input.parentInput.inputGroupRequiredVetoes[ valueIndex ].includes(`${_.last(parentOf(inputKeypath).split('.'))}`)) {
               const voter = _.last(parentOf(grandParentOf(grandParentOf(keypath))).split('.'))
-              const veto = !newStringValid ||
+              const veto = newStringInvalid || input.required && (typeof newValue === 'string' && newValue.length === 0 || newValue === undefined) ||
                 (input.type === 'searchable-with-result-in-side-panel' && typeof newValue === 'string' && isBlankNodeUri(newValue))
               castVetoForRequiredSubInput(inputGroupKeypath, valueIndex, voter, veto)
             }
+          }
+
+          function checkRequiredSubInputDisplayValue (newValue, oldvalue, keypath) {
+            const valueIndex = _.last(grandParentOf(keypath).split('.'))
+            const inputKeypath = grandParentOf(grandParentOf(keypath))
+            const inputGroupKeypath = parentOf(grandParentOf(inputKeypath))
+            const input = ractive.get(inputKeypath)
+            if (input.type === 'searchable-with-result-in-side-panel') {
+              const veto = newValue !== '' && newValue !== undefined && !input.values[ valueIndex ].deletable || input.required && (newValue === '' || newValue === undefined)
+              const voter = _.last(parentOf(grandParentOf(grandParentOf(keypath))).split('.'))
+              castVetoForRequiredSubInput(inputGroupKeypath, valueIndex, voter, veto)
+            }
+          }
+
+          function checkRequiredSubInputDeletable (newValue, oldvalue, keypath) {
+            const valueIndex = _.last(parentOf(keypath).split('.'))
+            const inputKeypath = grandParentOf(parentOf(keypath))
+            const inputGroupKeypath = parentOf(grandParentOf(inputKeypath))
+            const input = ractive.get(inputKeypath)
+            const voter = _.last(grandParentOf(grandParentOf(keypath)).split('.'))
+            castVetoForRequiredSubInput(inputGroupKeypath, valueIndex, voter, input.required && !newValue)
           }
 
           ractive.set('observers', [
@@ -5481,6 +5504,10 @@
             }, { init: false }),
 
             ractive.observe(`${inputsKeypath}.*.subInputs.*.input.values.*.current.value`, checkRequiredSubInput, { init: true }),
+
+            ractive.observe(`${inputsKeypath}.*.subInputs.*.input.values.*.current.displayValue`, checkRequiredSubInputDisplayValue, { init: true }),
+
+            ractive.observe(`${inputsKeypath}.*.subInputs.*.input.values.*.deletable`, checkRequiredSubInputDeletable, { init: true }),
 
             ractive.observe(`${inputsKeypath}.*.subInputs.*.input.values.*.nonEditable`, function (newValue, oldValue, keypath) {
               let compoundInputKeypath = grandParentOf(grandParentOf(grandParentOf(keypath)))
@@ -5569,6 +5596,13 @@
           return applicationData
         }
 
+        /**
+         * For a given group of inputs, this function finds inputs that may receive additional value suggestions from others, thus acting as default value for the inputs.
+         * If the last value slot of an input that is configured for this (having whenEmptyExternalSuggestionCopyValueFrom defined) is empty,
+         * value is copied from the source input.
+         *
+         * @param groupIndex
+         */
         function copyAdditionalSuggestionsForGroup (groupIndex) {
           forAllGroupInputs(function (input, groupIndex1) {
             if (groupIndex1 === Number(groupIndex) && input.widgetOptions && input.widgetOptions.whenEmptyExternalSuggestionCopyValueFrom) {
@@ -5577,12 +5611,12 @@
                 const value = _.last(input.values)
                 if (value && (!value.current || value.current.value === undefined || value.current.value === null || value.current.value === '' || _.isEqual(value.current.value, [ '' ]) ||
                     (input.type === 'searchable-with-result-in-side-panel' && typeof value.current.displayValue !== 'string' || value.current.displayValue === '') && typeof sourceInput.values[ 0 ] === 'object')) {
-                  ractive.set(`${input.keypath}.values.${input.values.length - 1}.current`, {
-                    value: sourceInput.values[ 0 ].current.value,
-                    displayValue: sourceInput.values[ 0 ].current.displayValue
-                  })
-                  ractive.set(`${input.keypath}.values.${input.values.length - 1}.searchable`, sourceInput.values[ 0 ].searchable)
-                  ractive.set(`${input.keypath}.values.${input.values.length - 1}.deletable`, sourceInput.values[ 0 ].deletable)
+                  ractive.set(`${input.keypath}.values.${input.values.length - 1}.current.value`, sourceInput.values[ 0 ].current.value)
+                  if (input.type === 'searchable-with-result-in-side-panel') {
+                    ractive.set(`${input.keypath}.values.${input.values.length - 1}.current.displayValue`, sourceInput.values[ 0 ].current.displayValue)
+                    ractive.set(`${input.keypath}.values.${input.values.length - 1}.deletable`, sourceInput.values[ 0 ].deletable)
+                    ractive.set(`${input.keypath}.values.${input.values.length - 1}.searchable`, sourceInput.values[ 0 ].searchable)
+                  }
                   ractive.set(`${input.keypath}.values.${input.values.length - 1}.subjectType`, input.values[ 0 ].subjectType)
                 }
               }
@@ -5727,7 +5761,9 @@
             .then(function () {
               ractive.set('rdfType', 'Publication')
               ractive.set('targetUri.Publication', query.Publication)
-              ractive.fire('activateTab', { keypath: 'inputGroups.' + (tab || '3') })
+              setTimeout(function () {
+                ractive.fire('activateTab', { keypath: 'inputGroups.' + (tab || '3') })
+              })
             })
         }
 

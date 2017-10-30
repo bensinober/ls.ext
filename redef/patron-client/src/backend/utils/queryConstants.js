@@ -36,7 +36,7 @@ module.exports = {
     { field: 'agents', boost: 1 },
     { field: 'author', boost: 5, minimumMatch: '60%' },
     { field: 'bio' },
-    { field: 'compType' },
+    { field: 'compositionType' },
     { field: 'country' },
     { field: 'desc', boost: 0.1 },
     { field: 'genre' },
@@ -52,6 +52,7 @@ module.exports = {
     { field: 'subject', boost: 0.5, phrase: true },
     { field: 'subject.raw', boost: 0.5, phrase: true },
     { field: 'summary', phrase: true },
-    { field: 'untranscribedTitle', phrase: true }
+    { field: 'untranscribedTitle', phrase: true },
+    { field: 'tag' }
   ]
 }

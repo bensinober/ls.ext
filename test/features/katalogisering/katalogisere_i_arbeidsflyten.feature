@@ -67,6 +67,7 @@ Egenskap: Katalogisere i arbeidsflyt
     Så velger jeg et emne fra treffliste fra emneregisteret
     Så sjekker jeg at emnet er listet opp på verket
     Og jeg venter litt
+    Og jeg skriver verdien "Fantomet" for "Stikkord"
     Og jeg venter litt
     Og bekrefter for å gå videre til "Beskriv deler"
     Så sjekker jeg at den verdien jeg la inn for "Aktør" inneholder personnavnet
@@ -777,3 +778,19 @@ Egenskap: Katalogisere i arbeidsflyt
     Så velger jeg et verk fra treffliste fra verksindeksen
     Og jeg venter litt
     Så sjekker jeg at antall relasjoner er 0
+
+  Scenario: Redigere klassifikasjon
+    Gitt at det finnes et verk med forfatter
+    Når jeg legger inn forfatternavnet på startsida
+    Og jeg venter litt
+    Og velger verket fra lista tilkoplet forfatteren
+    Og jeg venter litt
+    Og bekrefter for å gå videre til "Beskriv utgivelse"
+    Og bekrefter for å gå videre til "Beskriv verk"
+    Og bekrefter for å gå videre til "Emneopplysninger"
+    Og jeg skriver verdien "123.456.78" for "Klassfikasjonsnummer"
+    Og jeg velger verdien "DDC 22" for "Utgave"
+    Så krysser jeg av i avkrysningboksen for "Hovednummer"
+    Og jeg trykker på "Legg til"-knappen
+    Og jeg venter litt
+    Så sjekker jeg at antall Klassifikasjoner er 1

@@ -114,7 +114,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               {
                 rdfProperty: 'ordinal',
@@ -144,7 +146,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               createdTimestamp(),
               modifiedTimestamp()
@@ -170,7 +174,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               createdTimestamp(),
               modifiedTimestamp()
@@ -210,7 +216,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               createdTimestamp(),
               modifiedTimestamp()
@@ -328,7 +336,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               createdTimestamp(),
               modifiedTimestamp()
@@ -367,7 +377,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               createdTimestamp(),
               modifiedTimestamp()
@@ -434,7 +446,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               createdTimestamp(),
               modifiedTimestamp()
@@ -458,7 +472,9 @@ module.exports = (app) => {
               },
               {
                 rdfProperty: 'alternativeName',
-                type: 'input-string'
+                type: 'input-string',
+                multiple: true,
+                addAnotherLabel: 'addAnotherAlternativeName'
               },
               createdTimestamp(),
               modifiedTimestamp()
@@ -1214,7 +1230,7 @@ module.exports = (app) => {
                     onlyWhenAll: [
                       {
                         inputId: 'relationTypeInput',
-                        valueAsStringMatches: '^.*continuedIn$|^.*continuationOf$'
+                        valueAsStringMatches: '^.*continuedIn$|^.*continuationOf$|^.*relatedWork'
                       },
                       {
                         inputId: 'relatedToWorkInput',
@@ -1557,6 +1573,9 @@ module.exports = (app) => {
                       label: 'classificationSourceLabel',
                       rdfProperty: 'hasClassificationSource',
                       required: true
+                    },
+                    {
+                      rdfProperty: 'isMainClassificationNumber'
                     }
                   ]
                 }
@@ -1580,6 +1599,12 @@ module.exports = (app) => {
                   },
                   enableInPlaceEditing: true
                 }
+              },
+              {
+                rdfProperty: 'hasTag',
+                id: 'tagInput',
+                multiple: 'true',
+                addAnotherLabel: 'addAnotherTag'
               }
             ],
             nextStep: {

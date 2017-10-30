@@ -792,7 +792,7 @@ describe('searchBuilder', () => {
                                 constant_score: {
                                   filter: {
                                     match: {
-                                      compType: {
+                                      compositionType: {
                                         query: 'some more strings',
                                         minimum_should_match: '70%'
                                       }
@@ -1186,6 +1186,19 @@ describe('searchBuilder', () => {
                                       untranscribedTitle: {
                                         query: 'more strings',
                                         slop: 0
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                constant_score: {
+                                  boost: 1,
+                                  filter: {
+                                    match: {
+                                      tag: {
+                                        minimum_should_match: '70%',
+                                        query: 'some more strings'
                                       }
                                     }
                                   }

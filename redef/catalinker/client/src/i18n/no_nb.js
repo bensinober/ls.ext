@@ -58,6 +58,8 @@
     addAnotherPart: 'Legg til en del til',
     addAnotherAdditionalEntry: 'Legg til ny biinnførsel',
     addAnotherVariantTitle: 'Legg til en alternativ tittel til',
+    addAnotherTag: 'Legg til et stikkord til',
+    addAnotherAlternativeName: 'Legg til et alternativt navn til',
     suggestionFromOtherSources: 'Forslag fra andre eksterne kilder',
     missingRequiredValuesOfBlankMode: 'Kan ikke legge til før {{subjectTypeLabelDet(subjectType)}} er opprettet eller lastet. Påkrevde felter må være utfylt eller ha valgt autoritet/fast verdi.',
     cannotSelectRelationBeforeResourceTypeIsLoaded: 'Denne knytningen kan ikke velges før tilhørende ressurstype er lastet',
@@ -347,6 +349,7 @@
 `,//
     mergeAuthButtonLabel: 'Slå sammen disse to {{applicationData.translations[applicationData.language][rdfType + \'LabelPlur\']}}',
     mergeResourcesDialogTitle: 'Slå sammen autoriteter',
+    addMoreValuesInExtendedEditing: 'Du kan legge til flere verdier i utvidet redigering',
 
     // split work
     showPublicationsAndSplitWork: 'Vis utgivelser/splitte verk',
@@ -410,6 +413,8 @@
     searching: 'Søker…',
     copiedFrom: 'Fra {{>copiedFromType + "LabelDet"}}',
     copiedFromLegend: 'Verdien i dette feltet er kopiert fra {{copiedFromLabel}} på {{>copiedFromType + "LabelDet"}}',
-    acceptedStringFormat: 'Verdier kan ikke starte eller slutte med mellomrom'
+    acceptedStringFormat: 'Verdier kan ikke starte eller slutte med mellomrom',
+    yes: 'Ja',
+    no: 'Nei'
   }
 }))

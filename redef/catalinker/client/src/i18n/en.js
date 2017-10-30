@@ -58,6 +58,8 @@
     addAnotherPart: 'Add  another part',
     addAnotherAdditionalEntry: 'Add  another contributor',
     addAnotherVariantTitle: 'Add another variant title',
+    addAnotherTag: 'Add another tag',
+    addAnotherAlternativeName: 'Add another alternative name',
     suggestionFromOtherSources: 'Suggestions from external sources',
     missingRequiredValuesOfBlankMode: 'Cannot add until {{subjectTypeLabelDet(subjectType)}} has been created or loaded. Mandatory fields must populated.',
     cannotSelectRelationBeforeResourceTypeIsLoaded: 'Cannot select relation until relevant resource type is loaded', //Denne knytningen kan ikke velges før tilhørende ressurstype er lastet
@@ -345,6 +347,7 @@
 `,//
     mergeAuthButtonLabel: 'Merge these two {{applicationData.translations[applicationData.language][rdfType + \'LabelPlur\']}}',
     mergeResourcesDialogTitle: 'Merge authorities',
+    addMoreValuesInExtendedEditing: 'You can add more in extended editing',
 
     // split work
     showPublicationsAndSplitWork: 'Show publications/split work',
@@ -408,6 +411,8 @@
     searching: 'Searching…',
     copiedFrom: 'From {{>copiedFromType + "LabelDet"}}',
     copiedFromLegend: 'The value in this fields has been copied from {{copiedFromLabel}} of {{>copiedFromType + "LabelDet"}}',
-    acceptedStringFormat: 'Values must not start or end with white space'
+    acceptedStringFormat: 'Values must not start or end with white space',
+    yes: 'Yes',
+    no: 'No'
   }
 }));
